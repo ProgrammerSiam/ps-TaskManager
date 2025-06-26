@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ThemeToggle from "./components/ThemeToggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +26,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="absolute z-50 top-4 right-4">
+          <ThemeToggle />
+        </div>
+        <div className="fixed z-50 p-4 text-black bg-white rounded shadow top-4 left-4 dark:bg-black dark:text-white">
+          Test: This box should be black in dark mode and white in light mode.
+        </div>
         {children}
       </body>
     </html>
