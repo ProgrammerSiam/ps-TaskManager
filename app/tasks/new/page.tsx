@@ -33,7 +33,7 @@ export default function AddTask() {
       await createTask({
         title,
         description,
-        status: status as "pending" | "completed",
+        status: status as "pending" | "inprogress" | "completed",
         due_date: dueDate,
       });
       setToast({
@@ -170,6 +170,7 @@ export default function AddTask() {
                       onChange={(e) => setStatus(e.target.value)}
                     >
                       <option value="pending">Pending</option>
+                      <option value="inprogress">In Progress</option>
                       <option value="completed">Completed</option>
                     </select>
                   </div>

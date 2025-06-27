@@ -18,8 +18,9 @@ import {
 import React from "react";
 import Toast from "./components/Toast";
 import Tooltip from "./components/Tooltip";
+import SkeletonStats from "./components/SkeletonStats";
 
-const STATUS_OPTIONS = ["all", "pending", "completed"] as const;
+const STATUS_OPTIONS = ["all", "pending", "inprogress", "completed"] as const;
 
 type StatusFilter = (typeof STATUS_OPTIONS)[number];
 
@@ -164,37 +165,186 @@ export default function Dashboard() {
         />
       </div>
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        {/* Dashboard Statistics Section */}
+        {loading ? (
+          <SkeletonStats />
+        ) : (
+          !error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="mb-8"
+            >
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {/* Total Tasks */}
+                <div className="p-6 border border-blue-100 shadow-lg bg-white/90 backdrop-blur-md rounded-2xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Tasks
+                      </p>
+                      <p className="text-3xl font-bold text-gray-900">
+                        {tasks.length}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Completed Tasks */}
+                <div className="p-6 border shadow-lg bg-white/90 backdrop-blur-md border-emerald-100 rounded-2xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Completed
+                      </p>
+                      <p className="text-3xl font-bold text-emerald-600">
+                        {
+                          tasks.filter((task) => task.status === "completed")
+                            .length
+                        }
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100">
+                      <svg
+                        className="w-6 h-6 text-emerald-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* In Progress Tasks */}
+                <div className="p-6 border border-blue-100 shadow-lg bg-white/90 backdrop-blur-md rounded-2xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        In Progress
+                      </p>
+                      <p className="text-3xl font-bold text-blue-600">
+                        {
+                          tasks.filter((task) => task.status === "inprogress")
+                            .length
+                        }
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pending Tasks */}
+                <div className="p-6 border border-orange-100 shadow-lg bg-white/90 backdrop-blur-md rounded-2xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Pending
+                      </p>
+                      <p className="text-3xl font-bold text-orange-600">
+                        {
+                          tasks.filter((task) => task.status === "pending")
+                            .length
+                        }
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-orange-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              {tasks.length > 0 && (
+                <div className="p-6 mt-6 border border-blue-100 shadow-lg bg-white/90 backdrop-blur-md rounded-2xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Completion Progress
+                    </h3>
+                    <span className="text-sm font-medium text-gray-600">
+                      {
+                        tasks.filter((task) => task.status === "completed")
+                          .length
+                      }{" "}
+                      of {tasks.length} completed
+                    </span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-200 rounded-full">
+                    <div
+                      className="h-3 transition-all duration-500 ease-out rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600"
+                      style={{
+                        width: `${
+                          tasks.length > 0
+                            ? (tasks.filter(
+                                (task) => task.status === "completed"
+                              ).length /
+                                tasks.length) *
+                              100
+                            : 0
+                        }%`,
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between mt-2 text-xs text-gray-500">
+                    <span>0%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )
+        )}
         {/* Header Section */}
-        <div className="flex flex-col gap-4 mb-10 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-4xl font-extrabold tracking-tight text-gray-900 md:text-3xl">
-                📋 Recommended Tasks
-              </span>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-base font-medium text-gray-700">
-                Good{" "}
-                {new Date().getHours() < 12
-                  ? "morning"
-                  : new Date().getHours() < 18
-                  ? "afternoon"
-                  : "evening"}
-                !
-              </span>
-              <span className="text-base text-gray-500">
-                {new Date().toLocaleDateString(undefined, {
-                  weekday: "long",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-              <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">
-                {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
-              </span>
-            </div>
-          </div>
+        <div className="flex flex-col gap-4 mb-10 md:flex-row md:items-center md:justify-end">
           <div className="flex flex-wrap justify-start gap-2 mt-2 md:justify-end md:mt-0">
             <Tooltip content="Sort by Due Date">
               <Button
@@ -312,22 +462,14 @@ export default function Dashboard() {
                                   ${
                                     task.status.toLowerCase() === "completed"
                                       ? "bg-emerald-600 text-white border-emerald-700"
-                                      : ""
-                                  }
-                                  ${
-                                    task.status.toLowerCase() === "pending"
+                                      : task.status.toLowerCase() === "pending"
                                       ? "bg-orange-500 text-white border-orange-700"
-                                      : ""
-                                  }
-                                  ${
-                                    task.status.toLowerCase() === "inprogress"
+                                      : task.status.toLowerCase() ===
+                                        "inprogress"
                                       ? "bg-blue-700 text-white border-blue-900"
-                                      : ""
-                                  }
-                                  ${
-                                    task.status.toLowerCase() === "complete"
-                                      ? "bg-blue-900 text-white border-blue-900"
-                                      : ""
+                                      : task.status.toLowerCase() === "review"
+                                      ? "bg-yellow-300 text-gray-900 border-yellow-400"
+                                      : "bg-gray-200 text-gray-800 border-gray-400"
                                   }
                                 `}
                                 style={{
