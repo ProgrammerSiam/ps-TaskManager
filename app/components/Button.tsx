@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 // Extend props to support Framer Motion
 interface MotionProps {
   asMotion?: boolean;
-  whileHover?: any;
-  whileTap?: any;
-  initial?: any;
-  animate?: any;
-  exit?: any;
-  transition?: any;
+  whileHover?: React.ComponentProps<typeof motion.button>["whileHover"];
+  whileTap?: React.ComponentProps<typeof motion.button>["whileTap"];
+  initial?: React.ComponentProps<typeof motion.button>["initial"];
+  animate?: React.ComponentProps<typeof motion.button>["animate"];
+  exit?: React.ComponentProps<typeof motion.button>["exit"];
+  transition?: React.ComponentProps<typeof motion.button>["transition"];
 }
 
 type ButtonBaseProps = {
@@ -25,28 +25,6 @@ type ButtonProps = ButtonBaseProps &
     "className" | "children"
   > &
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "className" | "children">;
-
-function filterButtonProps(props: any) {
-  // Only allow valid button props
-  const {
-    type,
-    disabled,
-    onClick,
-    form,
-    value,
-    name,
-    autoFocus,
-    tabIndex,
-    ...rest
-  } = props;
-  return { type, disabled, onClick, form, value, name, autoFocus, tabIndex };
-}
-
-function filterAnchorProps(props: any) {
-  // Only allow valid anchor props
-  const { href, target, rel, download, tabIndex, onClick, ...rest } = props;
-  return { href, target, rel, download, tabIndex, onClick };
-}
 
 const Button = React.forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
@@ -65,6 +43,9 @@ const Button = React.forwardRef<
       animate,
       exit,
       transition,
+      onClick,
+      disabled,
+      type,
       ...props
     },
     ref
@@ -74,19 +55,19 @@ const Button = React.forwardRef<
       className;
 
     if (as === "a" && href) {
-      const anchorProps = filterAnchorProps({ ...props, href });
       if (asMotion) {
         return (
           <motion.a
             ref={ref as React.Ref<HTMLAnchorElement>}
             className={sharedClass}
+            href={href}
             whileHover={whileHover}
             whileTap={whileTap}
             initial={initial}
             animate={animate}
             exit={exit}
             transition={transition}
-            {...anchorProps}
+            onClick={onClick}
           >
             {children}
           </motion.a>
@@ -96,14 +77,15 @@ const Button = React.forwardRef<
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
           className={sharedClass}
-          {...anchorProps}
+          href={href}
+          onClick={onClick}
+          {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
           {children}
         </a>
       );
     }
     // Default to button
-    const buttonProps = filterButtonProps(props);
     if (asMotion) {
       return (
         <motion.button
@@ -115,7 +97,9 @@ const Button = React.forwardRef<
           animate={animate}
           exit={exit}
           transition={transition}
-          {...buttonProps}
+          onClick={onClick}
+          disabled={disabled}
+          type={type}
         >
           {children}
         </motion.button>
@@ -125,7 +109,10 @@ const Button = React.forwardRef<
       <button
         ref={ref as React.Ref<HTMLButtonElement>}
         className={sharedClass}
-        {...buttonProps}
+        onClick={onClick}
+        disabled={disabled}
+        type={type}
+        {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}
       </button>
