@@ -165,6 +165,68 @@ export default function Dashboard() {
         />
       </div>
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="flex flex-col gap-4 mb-10 md:flex-row md:items-center md:justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-4xl font-extrabold tracking-tight text-gray-900 md:text-3xl">
+                📋 Task Manager
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-base text-gray-500">
+                Today is{" "}
+                {new Date().toLocaleDateString(undefined, {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-start gap-2 mt-2 md:justify-end md:mt-0">
+            <Tooltip content="Sort by Due Date">
+              <Button
+                type="button"
+                className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 flex items-center gap-2 shadow-none
+                  ${
+                    sortAsc
+                      ? "text-white bg-blue-600"
+                      : "text-gray-500 bg-blue-100 hover:bg-blue-200"
+                  }
+                `}
+                onClick={() => setSortAsc((v) => !v)}
+              >
+                <span>Sort by Date</span>
+                {sortAsc ? (
+                  <FiChevronUp size={16} />
+                ) : (
+                  <FiChevronDown size={16} />
+                )}
+              </Button>
+            </Tooltip>
+            {STATUS_OPTIONS.map((opt) => (
+              <Tooltip key={opt} content={`Show ${opt} tasks`}>
+                <Button
+                  type="button"
+                  className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-none
+                    ${
+                      status === opt
+                        ? "bg-blue-600 text-white"
+                        : "bg-blue-400 text-gray-500 hover:bg-blue-200"
+                    }
+                  `}
+                  onClick={() => {
+                    if (status !== opt) setStatus(opt); // Only update if different
+                  }}
+                >
+                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                </Button>
+              </Tooltip>
+            ))}
+          </div>
+        </div>
         {/* Dashboard Statistics Section */}
         {loading ? (
           <SkeletonStats />
@@ -343,50 +405,6 @@ export default function Dashboard() {
             </motion.div>
           )
         )}
-        {/* Header Section */}
-        <div className="flex flex-col gap-4 mb-10 md:flex-row md:items-center md:justify-end">
-          <div className="flex flex-wrap justify-start gap-2 mt-2 md:justify-end md:mt-0">
-            <Tooltip content="Sort by Due Date">
-              <Button
-                type="button"
-                className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 flex items-center gap-2 shadow-none
-                  ${
-                    sortAsc
-                      ? "text-white bg-blue-600"
-                      : "text-gray-500 bg-blue-100 hover:bg-blue-200"
-                  }
-                `}
-                onClick={() => setSortAsc((v) => !v)}
-              >
-                <span>Sort by Date</span>
-                {sortAsc ? (
-                  <FiChevronUp size={16} />
-                ) : (
-                  <FiChevronDown size={16} />
-                )}
-              </Button>
-            </Tooltip>
-            {STATUS_OPTIONS.map((opt) => (
-              <Tooltip key={opt} content={`Show ${opt} tasks`}>
-                <Button
-                  type="button"
-                  className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-none
-                    ${
-                      status === opt
-                        ? "bg-blue-600 text-white"
-                        : "bg-blue-400 text-gray-500 hover:bg-blue-200"
-                    }
-                  `}
-                  onClick={() => {
-                    if (status !== opt) setStatus(opt); // Only update if different
-                  }}
-                >
-                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                </Button>
-              </Tooltip>
-            ))}
-          </div>
-        </div>
 
         {/* Tasks Grid Section */}
         {loading || pageLoading ? (
