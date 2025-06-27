@@ -81,7 +81,7 @@ export default function Toast({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 40 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className={`flex items-center px-5 py-3 mb-4 rounded-xl shadow-lg ${toastColors[type]} min-w-[220px] max-w-xs`}
+          className={`flex items-center max-w-xs px-5 py-3 mb-4 shadow-lg rounded-xl ${toastColors[type]} min-w-[220px]`}
           style={{ zIndex: 9999 }}
         >
           {icons[type]}

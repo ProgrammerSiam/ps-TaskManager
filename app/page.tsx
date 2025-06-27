@@ -430,20 +430,20 @@ export default function Dashboard() {
         )}
       </div>
       {/* Floating Action Button */}
-      <Tooltip content="Add New Task">
-        <motion.a
-          href="/tasks/new"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="fixed z-50 flex items-center justify-center w-16 h-16 text-white transition-all duration-300 border-4 border-white rounded-full shadow-2xl bottom-8 right-8 bg-gradient-to-r from-blue-600 to-blue-700 hover:shadow-3xl fancy-animate-border"
-          aria-label="Add New Task"
-        >
-          <FiPlus size={24} />
-        </motion.a>
-      </Tooltip>
+
+      <motion.a
+        href="/tasks/new"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed z-50 flex items-center justify-center w-16 h-16 text-white transition-all duration-300 border-4 border-white rounded-full shadow-2xl bottom-8 right-8 bg-gradient-to-r from-blue-600 to-blue-700 hover:shadow-3xl fancy-animate-border"
+        aria-label="Add New Task"
+      >
+        <FiPlus size={24} title="Add New Task" />
+      </motion.a>
+
       {/* Delete Confirmation Modal */}
       <Modal open={modalOpen} onClose={closeDeleteModal} title="">
         <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm" />
