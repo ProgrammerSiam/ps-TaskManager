@@ -164,69 +164,113 @@ export default function Dashboard() {
           onClose={() => setToast((t) => ({ ...t, show: false }))}
         />
       </div>
-      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <div className="flex flex-col gap-4 mb-10 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-4xl font-extrabold tracking-tight text-gray-900 md:text-3xl">
-                📋 Task Manager
-              </span>
+
+      {/*  Overview Section */}
+      {loading ? (
+        <SkeletonStats />
+      ) : (
+        <div className="flex flex-col items-center justify-center px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <div className="flex flex-col items-center justify-center gap-3 mb-3 md:flex-row">
+              <div className="flex items-center justify-center w-16 h-16 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl">
+                <span className="text-3xl">📋</span>
+              </div>
+
+              <div className="text-center md:text-left">
+                <h1 className="py-4 text-5xl font-black text-transparent text-gray-900 md:text-4xl lg:text-5xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
+                  Task Manager
+                  <p className="mt-1 text-lg font-medium text-gray-600">
+                    Organize • Track • Complete
+                  </p>
+                </h1>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-base text-gray-500">
-                Today is{" "}
-                {new Date().toLocaleDateString(undefined, {
-                  weekday: "long",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
+
+            <div className="flex flex-col items-center gap-4 mt-6 sm:flex-row sm:justify-center">
+              <div className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-full shadow-md bg-white/80 backdrop-blur-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-gray-700">
+                  {new Date().toLocaleDateString(undefined, {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+
+              {!loading && (
+                <div className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-full shadow-md bg-white/80 backdrop-blur-sm">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {tasks.length} {tasks.length === 1 ? "Task" : "Tasks"} Total
+                  </span>
+                </div>
+              )}
+
+              {!loading && tasks.length > 0 && (
+                <div className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-full shadow-md bg-white/80 backdrop-blur-sm">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {
+                      tasks.filter(
+                        (t) =>
+                          new Date(t.due_date) < new Date() &&
+                          t.status !== "completed"
+                      ).length
+                    }{" "}
+                    Overdue
+                  </span>
+                </div>
+              )}
             </div>
-          </div>
-          <div className="flex flex-wrap justify-start gap-2 mt-2 md:justify-end md:mt-0">
-            <Tooltip content="Sort by Due Date">
-              <Button
-                type="button"
-                className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 flex items-center gap-2 shadow-none
-                  ${
-                    sortAsc
-                      ? "text-white bg-blue-600"
-                      : "text-gray-500 bg-blue-100 hover:bg-blue-200"
-                  }
-                `}
-                onClick={() => setSortAsc((v) => !v)}
+
+            {!loading && tasks.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="p-4 mt-6 border bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border-blue-200/50"
               >
-                <span>Sort by Date</span>
-                {sortAsc ? (
-                  <FiChevronUp size={16} />
-                ) : (
-                  <FiChevronDown size={16} />
-                )}
-              </Button>
-            </Tooltip>
-            {STATUS_OPTIONS.map((opt) => (
-              <Tooltip key={opt} content={`Show ${opt} tasks`}>
-                <Button
-                  type="button"
-                  className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-none
-                    ${
-                      status === opt
-                        ? "bg-blue-600 text-white"
-                        : "bg-blue-400 text-gray-500 hover:bg-blue-200"
-                    }
-                  `}
-                  onClick={() => {
-                    if (status !== opt) setStatus(opt); // Only update if different
-                  }}
-                >
-                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                </Button>
-              </Tooltip>
-            ))}
-          </div>
+                <div className="flex items-center justify-center gap-6 text-sm">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-emerald-600">
+                      {Math.round(
+                        (tasks.filter((t) => t.status === "completed").length /
+                          tasks.length) *
+                          100
+                      )}
+                      %
+                    </div>
+                    <div className="text-gray-600">Complete</div>
+                  </div>
+                  <div className="w-px h-8 bg-gray-300"></div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {tasks.filter((t) => t.status === "inprogress").length}
+                    </div>
+                    <div className="text-gray-600">In Progress</div>
+                  </div>
+                  <div className="w-px h-8 bg-gray-300"></div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {tasks.filter((t) => t.status === "pending").length}
+                    </div>
+                    <div className="text-gray-600">Pending</div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
         </div>
+      )}
+
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Dashboard Statistics Section */}
         {loading ? (
           <SkeletonStats />
@@ -405,7 +449,52 @@ export default function Dashboard() {
             </motion.div>
           )
         )}
-
+        {/* tab Section */}
+        <div className="flex flex-col gap-4 mb-10 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap justify-start w-full gap-2 mt-2 md:justify-between md:mt-0">
+            <Tooltip content="Sort by Due Date">
+              <Button
+                type="button"
+                className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 flex items-center gap-2 shadow-none
+                  ${
+                    sortAsc
+                      ? "text-white bg-blue-600"
+                      : "text-gray-500 bg-blue-100 hover:bg-blue-200"
+                  }
+                `}
+                onClick={() => setSortAsc((v) => !v)}
+              >
+                <span>Sort by Date</span>
+                {sortAsc ? (
+                  <FiChevronUp size={16} />
+                ) : (
+                  <FiChevronDown size={16} />
+                )}
+              </Button>
+            </Tooltip>
+            <div className="flex flex-wrap justify-start gap-2 mt-2 w-fit md:justify-between md:mt-0">
+              {STATUS_OPTIONS.map((opt) => (
+                <Tooltip key={opt} content={`Show ${opt} tasks`}>
+                  <Button
+                    type="button"
+                    className={`px-6 py-2 rounded-full font-semibold text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-none
+                    ${
+                      status === opt
+                        ? "bg-blue-600 text-white"
+                        : "bg-blue-400 text-gray-500 hover:bg-blue-200"
+                    }
+                  `}
+                    onClick={() => {
+                      if (status !== opt) setStatus(opt); // Only update if different
+                    }}
+                  >
+                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  </Button>
+                </Tooltip>
+              ))}
+            </div>
+          </div>
+        </div>
         {/* Tasks Grid Section */}
         {loading || pageLoading ? (
           <SkeletonTable />
